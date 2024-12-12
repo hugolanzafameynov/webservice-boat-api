@@ -1,0 +1,1099 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Fishing Friends API",
+    "description": "Private API for managing users, boats, fishing trips, reservations, and fishing logs.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://localhost"
+    }
+  ],
+  "paths": {
+    "/v1/users": {
+      "get": {
+        "summary": "Get the list of users",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new user",
+        "tags": [
+          "Users"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/users/{userId}": {
+      "get": {
+        "summary": "Get a user by ID",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a user",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a user",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User deleted"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/v1/boats": {
+      "get": {
+        "summary": "Get the list of boats",
+        "tags": [
+          "Boats"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of boats",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Boat"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new boat",
+        "tags": [
+          "Boats"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Boat"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Boat created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Boat"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/boats/{boatId}": {
+      "get": {
+        "summary": "Get a boat by ID",
+        "tags": [
+          "Boats"
+        ],
+        "parameters": [
+          {
+            "name": "boatId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the boat",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Boat found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Boat"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Boat not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a boat",
+        "tags": [
+          "Boats"
+        ],
+        "parameters": [
+          {
+            "name": "boatId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the boat",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Boat"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Boat updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Boat"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Boat not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a boat",
+        "tags": [
+          "Boats"
+        ],
+        "parameters": [
+          {
+            "name": "boatId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the boat",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Boat deleted"
+          },
+          "404": {
+            "description": "Boat not found"
+          }
+        }
+      }
+    },
+    "/v1/trips": {
+      "get": {
+        "summary": "Get the list of fishing trips",
+        "tags": [
+          "Fishing Trips"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of fishing trips",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FishingTrip"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new fishing trip",
+        "tags": [
+          "Fishing Trips"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FishingTrip"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Fishing trip created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FishingTrip"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trips/{tripId}": {
+      "get": {
+        "summary": "Get a fishing trip by ID",
+        "tags": [
+          "Fishing Trips"
+        ],
+        "parameters": [
+          {
+            "name": "tripId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the fishing trip",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fishing trip found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FishingTrip"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Fishing trip not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a fishing trip",
+        "tags": [
+          "Fishing Trips"
+        ],
+        "parameters": [
+          {
+            "name": "tripId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the fishing trip",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FishingTrip"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Fishing trip updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FishingTrip"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Fishing trip not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a fishing trip",
+        "tags": [
+          "Fishing Trips"
+        ],
+        "parameters": [
+          {
+            "name": "tripId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the fishing trip",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Fishing trip deleted"
+          },
+          "404": {
+            "description": "Fishing trip not found"
+          }
+        }
+      }
+    },
+    "/v1/reservations": {
+      "get": {
+        "summary": "Get the list of reservations",
+        "tags": [
+          "Reservations"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of reservations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Reservation"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new reservation",
+        "tags": [
+          "Reservations"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Reservation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reservation created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reservation"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reservations/{reservationId}": {
+      "get": {
+        "summary": "Get a reservation by ID",
+        "tags": [
+          "Reservations"
+        ],
+        "parameters": [
+          {
+            "name": "reservationId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the reservation",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reservation found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reservation"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Reservation not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a reservation",
+        "tags": [
+          "Reservations"
+        ],
+        "parameters": [
+          {
+            "name": "reservationId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the reservation",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Reservation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reservation updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reservation"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Reservation not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a reservation",
+        "tags": [
+          "Reservations"
+        ],
+        "parameters": [
+          {
+            "name": "reservationId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the reservation",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Reservation deleted"
+          },
+          "404": {
+            "description": "Reservation not found"
+          }
+        }
+      }
+    },
+    "/v1/logs": {
+      "get": {
+        "summary": "Get fishing logs",
+        "tags": [
+          "Fishing Logs"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of fishing logs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FishingLog"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new fishing log",
+        "tags": [
+          "Fishing Logs"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FishingLog"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Fishing log created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FishingLog"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/logs/{logId}": {
+      "get": {
+        "summary": "Get a fishing log by ID",
+        "tags": [
+          "Fishing Logs"
+        ],
+        "parameters": [
+          {
+            "name": "logId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the fishing log",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fishing log found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FishingLog"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Fishing log not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a fishing log",
+        "tags": [
+          "Fishing Logs"
+        ],
+        "parameters": [
+          {
+            "name": "logId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the fishing log",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FishingLog"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Fishing log updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FishingLog"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Fishing log not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a fishing log",
+        "tags": [
+          "Fishing Logs"
+        ],
+        "parameters": [
+          {
+            "name": "logId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the fishing log",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Fishing log deleted"
+          },
+          "404": {
+            "description": "Fishing log not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "filter": {
+        "in": "query",
+        "name": "filter",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Filtering criteria for searches"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "spokenLanguages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "photoUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "boatLicenseNumber": {
+            "type": "string",
+            "pattern": "^[0-9]{8}$"
+          },
+          "insuranceNumber": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9]{12}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "individual",
+              "professional"
+            ]
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "activityType": {
+            "type": "string",
+            "enum": [
+              "rental",
+              "fishing guide"
+            ]
+          },
+          "siretNumber": {
+            "type": "string"
+          },
+          "registrationNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "Boat": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "yearOfManufacture": {
+            "type": "integer"
+          },
+          "photoUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "licenseType": {
+            "type": "string",
+            "enum": [
+              "coastal",
+              "inland"
+            ]
+          },
+          "boatType": {
+            "type": "string",
+            "enum": [
+              "open",
+              "cabin",
+              "catamaran",
+              "sailboat",
+              "jet ski",
+              "canoe"
+            ]
+          },
+          "equipment": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "deposit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxCapacity": {
+            "type": "integer"
+          },
+          "berths": {
+            "type": "integer"
+          },
+          "dockingPort": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "engineType": {
+            "type": "string",
+            "enum": [
+              "diesel",
+              "gasoline",
+              "none"
+            ]
+          },
+          "enginePower": {
+            "type": "integer"
+          }
+        }
+      },
+      "FishingTrip": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "practicalInfo": {
+            "type": "string"
+          },
+          "tripType": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "recurring"
+            ]
+          },
+          "pricingType": {
+            "type": "string",
+            "enum": [
+              "global",
+              "per person"
+            ]
+          },
+          "startDate": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          "endDate": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          "departureTimes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "endTimes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "passengers": {
+            "type": "integer"
+          },
+          "price": {
+            "type": "number"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "boatId": {
+            "type": "string"
+          }
+        }
+      },
+      "Reservation": {
+        "type": "object",
+        "properties": {
+          "tripId": {
+            "type": "string"
+          },
+          "reservationDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "reservedSeats": {
+            "type": "integer"
+          },
+          "totalPrice": {
+            "type": "number"
+          },
+          "userId": {
+            "type": "string"
+          }
+        }
+      },
+      "FishingLog": {
+        "type": "object",
+        "properties": {
+          "fishName": {
+            "type": "string"
+          },
+          "fishPhotoUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "size": {
+            "type": "number"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "fishingLocation": {
+            "type": "string"
+          },
+          "fishingDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "releasedFish": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Users",
+      "description": "Manage the application's users"
+    },
+    {
+      "name": "Boats",
+      "description": "Manage boats"
+    },
+    {
+      "name": "Fishing Trips",
+      "description": "Manage fishing trips"
+    },
+    {
+      "name": "Reservations",
+      "description": "Manage fishing trip reservations"
+    },
+    {
+      "name": "Fishing Logs",
+      "description": "Manage fishing logs"
+    }
+  ]
+}
