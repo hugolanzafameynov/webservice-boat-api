@@ -1,0 +1,39 @@
+services:
+
+
+  ws.mysql:
+    build:
+      context: ws.mysql/
+      dockerfile: dockerFile
+    container_name: ws.mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_HOST: '%'
+    restart: always
+    volumes:
+      - './ws.mysql/db:/var/lib/mysql'
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -P ${DB_PORT} -p${DB_ROOT_PASSWORD} | grep 'mysqld is alive' || exit 1" ]
+      interval: 5s
+      timeout: 30s
+      retries: 10
+
+
+  # Adminer
+  ws.dbviewer:
+    build:
+      context: ws.dbviewer/
+      dockerfile: dockerFile
+    container_name: ws.dbviewer
+    restart: unless-stopped
+    depends_on:
+      incepsolution.sgbd:
+        condition: service_healthy
+    ports:
+      - ${ADMINER_PORT}:${ADMINER_PORT}
+
