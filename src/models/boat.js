@@ -1,5 +1,6 @@
-const { DataTypes } = require('sequelize');
+const {DataTypes} = require('sequelize');
 const sequelize = require('../../config/database');
+const equipment = require('./equipment');
 
 const Boat = sequelize.define('Boat', {
     name: {
@@ -32,10 +33,6 @@ const Boat = sequelize.define('Boat', {
     boatType: {
         type: DataTypes.ENUM('open', 'cabin', 'catamaran', 'sailboat', 'jet ski', 'canoe'),
         allowNull: false,
-    },
-    equipment: {
-        type: DataTypes.ARRAY(DataTypes.STRING), // Array de strings pour les équipements
-        allowNull: true,
     },
     deposit: {
         type: DataTypes.INTEGER,
@@ -72,6 +69,12 @@ const Boat = sequelize.define('Boat', {
 }, {
     tableName: 'boats',
     timestamps: true, // Ajout des colonnes createdAt et updatedAt
+});
+
+Boat.belongsToMany(equipment, {
+    through: 'BoatEquipments',
+    foreignKey: 'boatId',
+    otherKey: 'equipmentId',
 });
 
 module.exports = Boat;

@@ -1,47 +1,235 @@
-const boat = require("../models/boat");
+const Boat = require("../models/boat");
+const Equipment = require("../models/equipment");
+const {Op} = require("sequelize");
 
+/**
+ * Get all boats
+ *
+ * @param req
+ * @param res
+ * @return {Promise<void>}
+ */
 const getAllBoats = async (req, res) => {
     try {
-        const boats = await boat.findAll();
+        const boats = await Boat.findAll();
         res.status(200).json(boats);
     } catch (error) {
         res.status(500).json({error: error.message});
     }
 };
 
+/**
+ * Get boats with filters
+ *
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
+const getBoatsWithFilters = async (req, res) => {
+    try {
+        const {
+            name,
+            band,
+            yearOfManufacture,
+            licenceType,
+            boatType,
+            deposit,
+            maxCapacity,
+            berths,
+            dockingPort,
+            engineType,
+            enginePower,
+            equipments,
+        } = req.query;
+
+        let filter = {};
+
+        if (name) {
+            filter.name = {[Op.iLike]: `%${name}%`};
+        }
+
+        if (band) {
+            filter.band = {[Op.iLike]: band};
+        }
+
+        if (yearOfManufacture) {
+            filter.yearOfManufacture = {[Op.eq]: yearOfManufacture};
+        }
+
+        if (licenceType) {
+            filter.licenceType = {[Op.iLike]: licenceType};
+        }
+
+        if (boatType) {
+            filter.boatType = {[Op.iLike]: boatType};
+        }
+
+        if (equipments) {
+            filter.equipments = {[Op.iLike]: equipments};
+        }
+
+        if (deposit) {
+            filter.deposit = {[Op.gte]: deposit};
+        }
+
+        if (maxCapacity) {
+            filter.maxCapacity = {[Op.gte]: maxCapacity};
+        }
+
+        if (berths) {
+            filter.berths = {[Op.gte]: berths};
+        }
+
+        if (dockingPort) {
+            filter.dockingPort = {[Op.iLike]: dockingPort};
+        }
+
+        if (engineType) {
+            filter.engineType = {[Op.iLike]: engineType};
+        }
+
+        if (enginePower) {
+            filter.enginePower = {[Op.gte]: enginePower};
+        }
+
+        let include = [];
+
+        if (equipments) {
+            const equipmentList = equipments.split(',').map(equipment => equipment.trim());
+            include.push({
+                model: Equipment,
+                where: {
+                    name: {[Op.in]: equipmentList},
+                },
+                required: true,
+            });
+        }
+
+        const boats = await Boat.findAll({
+            where: filter,
+            include: include,
+        });
+
+        if (boats.length === 0) {
+            return res.status(404).json({message: 'No boats found with the specified filters.'});
+        }
+
+        res.status(200).json(boats);
+    } catch (error) {
+        res.status(500).json({error: error.message});
+    }
+};
+
+/**
+ * Get boats with within a bounding box (minLat, maxLat, minLon, maxLon)
+ *
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
+const getBoatsByBoundingBox = async (req, res) => {
+    try {
+        const {minLat, maxLat, minLon, maxLon} = req.query;
+
+        if (!minLat || !maxLat || !minLon || !maxLon) {
+            return res.status(400).json({message: 'Bounding box parameters (minLat, maxLat, minLon, maxLon) are required.'});
+        }
+
+        const boats = await Boat.findAll({
+            where: {
+                latitude: {
+                    [Op.between]: [minLat, maxLat],
+                },
+                longitude: {
+                    [Op.between]: [minLon, maxLon],
+                }
+            }
+        });
+
+        if (boats.length === 0) {
+            return res.status(404).json({message: 'No boats found in the specified area.'});
+        }
+
+        res.status(200).json(boats);
+    } catch (error) {
+        res.status(500).json({error: error.message});
+    }
+};
+
+
+/**
+ * Get boat by id
+ *
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const getBoatById = async (req, res) => {
     try {
-        const boat = await boat.findByPk(req.params.boatId);
-        if (!boat) return res.status(404).json({message: 'boat not found'});
+        const boat = await Boat.findByPk(req.params.boatId);
+
+        if (!boat) {
+            return res.status(404).json({message: 'boat not found'});
+        }
+
         res.status(200).json(boat);
     } catch (error) {
         res.status(500).json({error: error.message});
     }
 };
 
+/**
+ * Create a boat
+ *
+ * @param req
+ * @param res
+ * @return {Promise<void>}
+ */
 const createBoat = async (req, res) => {
     try {
-        const boat = await boat.create(req.body);
+        const boat = await Boat.create(req.body);
         res.status(201).json(boat);
     } catch (error) {
         res.status(400).json({error: error.message});
     }
 };
 
+/**
+ * Update a boat
+ *
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const updateBoat = async (req, res) => {
     try {
-        const boat = await boat.update(req.params.boatId, req.body);
-        if (!boat) return res.status(404).json({message: 'boat not found'});
+        const boat = await Boat.update(req.params.boatId, req.body);
+
+        if (!boat) {
+            return res.status(404).json({message: 'boat not found'});
+        }
+
         res.status(200).json(boat);
     } catch (error) {
         res.status(400).json({error: error.message});
     }
 };
 
+/**
+ * Delete a boat
+ *
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const deleteBoat = async (req, res) => {
     try {
-        const boat = await boat.destroy(req.params.boatId);
-        if (!boat) return res.status(404).json({message: 'boat not found'});
+        const boat = await Boat.destroy(req.params.boatId);
+
+        if (!boat) {
+            return res.status(404).json({message: 'boat not found'});
+        }
+
         res.status(204).send();
     } catch (error) {
         res.status(500).json({error: error.message});
@@ -50,6 +238,8 @@ const deleteBoat = async (req, res) => {
 
 module.exports = {
     getAllBoats,
+    getBoatsWithFilters,
+    getBoatsByBoundingBox,
     getBoatById,
     createBoat,
     updateBoat,
