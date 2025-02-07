@@ -32,7 +32,7 @@ services:
     container_name: ws.dbviewer
     restart: unless-stopped
     depends_on:
-      incepsolution.sgbd:
+      ws.sgbd:
         condition: service_healthy
     ports:
       - ${ADMINER_PORT}:${ADMINER_PORT}
