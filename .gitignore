@@ -1,3 +1,5 @@
 node_modules/
 .idea/
+ws.dbviewer
+ws.mysql
 .env

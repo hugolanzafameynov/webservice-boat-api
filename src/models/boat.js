@@ -1,6 +1,6 @@
 const {DataTypes} = require('sequelize');
 const sequelize = require('../../config/database');
-const equipment = require('./equipment');
+const Equipment = require('./equipment');
 
 const Boat = sequelize.define('Boat', {
     name: {
@@ -69,12 +69,6 @@ const Boat = sequelize.define('Boat', {
 }, {
     tableName: 'boats',
     timestamps: true, // Ajout des colonnes createdAt et updatedAt
-});
-
-Boat.belongsToMany(equipment, {
-    through: 'BoatEquipments',
-    foreignKey: 'boatId',
-    otherKey: 'equipmentId',
 });
 
 module.exports = Boat;

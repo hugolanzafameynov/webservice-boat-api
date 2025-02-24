@@ -1,10 +1,10 @@
+version: '3.8'
+
 services:
-
-
   ws.mysql:
     build:
       context: ws.mysql/
-      dockerfile: dockerFile
+      dockerfile: Dockerfile
     container_name: ws.mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
@@ -16,24 +16,30 @@ services:
     volumes:
       - './ws.mysql/db:/var/lib/mysql'
     ports:
-      - ${DB_PORT}:${DB_PORT}
+      - "${DB_PORT}:3306"
     healthcheck:
-      test: [ "CMD-SHELL", "mysqladmin ping -P ${DB_PORT} -p${DB_ROOT_PASSWORD} | grep 'mysqld is alive' || exit 1" ]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_ROOT_PASSWORD}" ]
       interval: 5s
       timeout: 30s
       retries: 10
+    networks:
+      - ws_network
 
-
-  # Adminer
   ws.dbviewer:
     build:
       context: ws.dbviewer/
-      dockerfile: dockerFile
+      dockerfile: Dockerfile
     container_name: ws.dbviewer
     restart: unless-stopped
     depends_on:
-      incepsolution.sgbd:
+      ws.mysql:
         condition: service_healthy
     ports:
-      - ${ADMINER_PORT}:${ADMINER_PORT}
+      - "${ADMINER_PORT}:8080"
+    environment:
+      ADMINER_DESIGN: ${ADMINER_DESIGN}
+    networks:
+      - ws_network
 
+networks:
+  ws_network:
