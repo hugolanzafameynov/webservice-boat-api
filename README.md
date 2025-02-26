@@ -72,7 +72,7 @@ POST `/v1/users`: Crée un utilisateur
 ```json
 {
     "name": "John",
-    "firstName": "Doe",
+    "firstName": "Cnea",
     "birthDate": "1990-01-01",
     "email": "johndoe@example.com",
     "phone": "123-456-7890",
@@ -87,8 +87,7 @@ PUT `/v1/users/:id`: Met à jour un utilisateur
 
 ```json
 {
-    "name": "John",
-    "firstName": "Updated"
+    "firstName": "Cena"
 }
 ```
 

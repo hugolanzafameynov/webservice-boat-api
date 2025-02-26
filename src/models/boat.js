@@ -1,6 +1,5 @@
 const {DataTypes} = require('sequelize');
 const sequelize = require('../../config/database');
-const Equipment = require('./equipment');
 
 const Boat = sequelize.define('Boat', {
     name: {
@@ -68,7 +67,7 @@ const Boat = sequelize.define('Boat', {
     },
 }, {
     tableName: 'boats',
-    timestamps: true, // Ajout des colonnes createdAt et updatedAt
+    timestamps: false, // Ajout des colonnes createdAt et updatedAt
 });
 
 module.exports = Boat;

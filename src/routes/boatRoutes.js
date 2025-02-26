@@ -4,9 +4,11 @@ const boatController = require('../controllers/boatController');
 const router = express.Router();
 
 router.get('/', boatController.getAllBoats);
-router.get('/:id', boatController.getBoatById);
+router.get('/filters', boatController.getBoatsWithFilters);
+router.get('/bounding-box', boatController.getBoatsByBoundingBox);
+router.get('/:boatId', boatController.getBoatById);
 router.post('/', boatController.createBoat);
-router.put('/:id', boatController.updateBoat);
-router.delete('/:id', boatController.deleteBoat);
+router.put('/:boatId', boatController.updateBoat);
+router.delete('/:boatId', boatController.deleteBoat);
 
 module.exports = router;

@@ -39,13 +39,12 @@ const getBoatsWithFilters = async (req, res) => {
             dockingPort,
             engineType,
             enginePower,
-            equipments,
         } = req.query;
 
         let filter = {};
 
         if (name) {
-            filter.name = {[Op.iLike]: `%${name}%`};
+            filter.name = {[Op.like]: `%${name}%`};
         }
 
         if (band) {
@@ -62,10 +61,6 @@ const getBoatsWithFilters = async (req, res) => {
 
         if (boatType) {
             filter.boatType = {[Op.iLike]: boatType};
-        }
-
-        if (equipments) {
-            filter.equipments = {[Op.iLike]: equipments};
         }
 
         if (deposit) {
@@ -94,24 +89,13 @@ const getBoatsWithFilters = async (req, res) => {
 
         let include = [];
 
-        if (equipments) {
-            const equipmentList = equipments.split(',').map(equipment => equipment.trim());
-            include.push({
-                model: Equipment,
-                where: {
-                    name: {[Op.in]: equipmentList},
-                },
-                required: true,
-            });
-        }
-
         const boats = await Boat.findAll({
             where: filter,
             include: include,
         });
 
         if (boats.length === 0) {
-            return res.status(404).json({message: 'No boats found with the specified filters.'});
+            return res.status(404).json({message: filter + 'No boats found with the specified filters.'});
         }
 
         res.status(200).json(boats);
@@ -133,6 +117,14 @@ const getBoatsByBoundingBox = async (req, res) => {
 
         if (!minLat || !maxLat || !minLon || !maxLon) {
             return res.status(400).json({message: 'Bounding box parameters (minLat, maxLat, minLon, maxLon) are required.'});
+        }
+
+        if (minLat > maxLat) {
+            return res.status(400).json({message: 'minLat cannot be greater than maxLat.'});
+        }
+
+        if (minLon > maxLon) {
+            return res.status(400).json({message: 'minLon cannot be greater than maxLon.'});
         }
 
         const boats = await Boat.findAll({
@@ -166,7 +158,8 @@ const getBoatsByBoundingBox = async (req, res) => {
  */
 const getBoatById = async (req, res) => {
     try {
-        const boat = await Boat.findByPk(req.params.boatId);
+        const boatId = req.params.boatId;
+        const boat = await Boat.findByPk(boatId);
 
         if (!boat) {
             return res.status(404).json({message: 'boat not found'});
@@ -203,7 +196,8 @@ const createBoat = async (req, res) => {
  */
 const updateBoat = async (req, res) => {
     try {
-        const boat = await Boat.update(req.params.boatId, req.body);
+        const boatId = req.params.boatId;
+        const boat = await Boat.update(req.body, {where: {id: boatId}});
 
         if (!boat) {
             return res.status(404).json({message: 'boat not found'});
@@ -224,7 +218,8 @@ const updateBoat = async (req, res) => {
  */
 const deleteBoat = async (req, res) => {
     try {
-        const boat = await Boat.destroy(req.params.boatId);
+        const boatId = req.params.boatId;
+        const boat = await Boat.destroy({where: {id: boatId}});
 
         if (!boat) {
             return res.status(404).json({message: 'boat not found'});
