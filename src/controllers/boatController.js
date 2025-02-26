@@ -48,7 +48,7 @@ const getBoatsWithFilters = async (req, res) => {
         }
 
         if (band) {
-            filter.band = {[Op.iLike]: band};
+            filter.band = {[Op.like]: band};
         }
 
         if (yearOfManufacture) {
@@ -56,11 +56,11 @@ const getBoatsWithFilters = async (req, res) => {
         }
 
         if (licenceType) {
-            filter.licenceType = {[Op.iLike]: licenceType};
+            filter.licenceType = {[Op.like]: licenceType};
         }
 
         if (boatType) {
-            filter.boatType = {[Op.iLike]: boatType};
+            filter.boatType = {[Op.like]: boatType};
         }
 
         if (deposit) {
@@ -76,11 +76,11 @@ const getBoatsWithFilters = async (req, res) => {
         }
 
         if (dockingPort) {
-            filter.dockingPort = {[Op.iLike]: dockingPort};
+            filter.dockingPort = {[Op.like]: dockingPort};
         }
 
         if (engineType) {
-            filter.engineType = {[Op.iLike]: engineType};
+            filter.engineType = {[Op.like]: engineType};
         }
 
         if (enginePower) {
