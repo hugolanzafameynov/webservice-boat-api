@@ -1,4 +1,5 @@
 const Boat = require("../models/boat");
+const User = require("../models/user");
 const {Op} = require("sequelize");
 
 /**
@@ -179,6 +180,17 @@ const getBoatById = async (req, res) => {
  */
 const createBoat = async (req, res) => {
     try {
+        const {userId} = req.body;
+        const user = await User.findByPk(userId);
+
+        if (!user) {
+            return res.status(404).json({error: "User not found."});
+        }
+
+        if (!user.boatLicenseNumber) {
+            return res.status(403).json({error: "You must have a boat license to create a boat."});
+        }
+
         const boat = await Boat.create(req.body);
         res.status(201).json(boat);
     } catch (error) {

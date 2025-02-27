@@ -1,4 +1,8 @@
 const User = require("../models/user");
+const Boat = require("../models/boat");
+const FishingTrip = require("../models/fishingTrip");
+const Reservation = require("../models/reservation");
+const FishingLog = require("../models/fishingLog");
 const {Op} = require("sequelize");
 
 const getAllUsers = async (req, res) => {
@@ -61,6 +65,32 @@ const getUserById = async (req, res) => {
     }
 };
 
+const getUserFullProfileById = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const user = await User.findByPk(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const boats = await Boat.findAll({ where: { id: user.boatIds } });
+        const fishingTrips = await FishingTrip.findAll({ where: { id: user.fishingTripIds } });
+        const reservations = await Reservation.findAll({ where: { id: user.reservationIds } });
+        const fishingLogs = await FishingLog.findAll({ where: { id: user.fishingLogIds } });
+
+        res.status(200).json({
+            user,
+            boats,
+            fishingTrips,
+            reservations,
+            fishingLogs
+        });
+    } catch (error) {
+        res.status(500).json({error: error.message});
+    }
+};
+
 const createUser = async (req, res) => {
     try {
         const user = await User.create(req.body);
@@ -108,6 +138,7 @@ module.exports = {
     getAllUsers,
     getUsersWithFilters,
     getUserById,
+    getUserFullProfileById,
     createUser,
     updateUser,
     deleteUser,

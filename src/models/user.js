@@ -68,6 +68,26 @@ const User = sequelize.define('User', {
     registrationNumber: {
         type: DataTypes.STRING
     },
+    boatIds: {
+        type: DataTypes.JSON,
+        allowNull: false,
+        defaultValue: [],
+    },
+    fishingLogIds: {
+        type: DataTypes.JSON,
+        allowNull: false,
+        defaultValue: [],
+    },
+    fishingTripIds: {
+        type: DataTypes.JSON,
+        allowNull: false,
+        defaultValue: [],
+    },
+    reservationIds: {
+        type: DataTypes.JSON,
+        allowNull: false,
+        defaultValue: [],
+    }
 }, {
     tableName: 'users',
     timestamps: false, // pour ajouter createdAt et updatedAt
