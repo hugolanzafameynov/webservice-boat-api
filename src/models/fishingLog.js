@@ -37,6 +37,10 @@ const FishingLog = sequelize.define('FishingLog', {
         type: DataTypes.BOOLEAN,
         allowNull: false,
     },
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
 }, {
     tableName: 'fishing_logs',
     timestamps: false, // Ajoute createdAt et updatedAt

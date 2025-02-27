@@ -61,6 +61,24 @@ const getFishingLogById = async (req, res) => {
     }
 };
 
+const getFishingLogByIdAndUserId = async (req, res) => {
+    try {
+        const {userId, fishingLogId} = req.params;
+        const fishingLog = await FishingLog.findOne({
+            where: {id: fishingLogId, userId: userId}
+        });
+
+        if (!fishingLog) {
+            return res.status(404).json({message: 'FishingLog not found'});
+        }
+
+        res.status(200).json(fishingLog);
+    } catch (error) {
+        res.status(500).json({error: error.message});
+    }
+};
+
+
 const createFishingLog = async (req, res) => {
     try {
         const fishingLog = await FishingLog.create(req.body);
@@ -107,6 +125,7 @@ module.exports = {
     getAllFishingLogs,
     getFishingLogsWithFilters,
     getFishingLogById,
+    getFishingLogByIdAndUserId,
     createFishingLog,
     updateFishingLog,
     deleteFishingLog,
