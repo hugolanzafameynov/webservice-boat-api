@@ -1,8 +1,45 @@
 const User = require("../models/user");
+const {Op} = require("sequelize");
 
 const getAllUsers = async (req, res) => {
     try {
         const users = await User.findAll();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({error: error.message});
+    }
+};
+
+/**
+ * Get users with filters
+ *
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
+const getUsersWithFilters = async (req, res) => {
+    try {
+        const {
+            title,
+        } = req.query;
+
+        let filter = {};
+
+        if (name) {
+            filter.title = {[Op.like]: `%${title}%`};
+        }
+
+        let include = [];
+
+        const users = await User.findAll({
+            where: filter,
+            include: include,
+        });
+
+        if (users.length === 0) {
+            return res.status(404).json({message: 'No users found with the specified filters.'});
+        }
+
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({error: error.message});
@@ -53,9 +90,11 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
     try {
         const userId = req.params.userId;
-        const deletedUser = await User.destroy({where: {id: userId}});
+        const deletedCount = await User.destroy({
+            where: {id: userId}
+        });
 
-        if (!deletedUser) {
+        if (deletedCount === 0) {
             return res.status(404).json({message: 'User not found'});
         }
 
@@ -67,6 +106,7 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
     getAllUsers,
+    getUsersWithFilters,
     getUserById,
     createUser,
     updateUser,

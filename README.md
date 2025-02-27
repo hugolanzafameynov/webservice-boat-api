@@ -65,6 +65,8 @@ Par défaut, l'API est disponible sur http://localhost:3000
 
 GET `/v1/users`: Récupère tous les utilisateurs
 
+GET `/v1/users/filters`: Récupère tous les utilisateurs filtrés
+
 GET `/v1/users/:id`: Récupère un utilisateur par ID
 
 POST `/v1/users`: Crée un utilisateur
@@ -93,9 +95,13 @@ PUT `/v1/users/:id`: Met à jour un utilisateur
 
 DELETE `/v1/users/:id`: Supprime un utilisateur
 
-### Bateaux (/v1/boats)
+### Bateaux (`/v1/boats`)
 
 GET `/v1/boats`: Récupère tous les bateaux
+
+GET `/v1/boats/filters`: Récupère tous les bateaux filtrés
+
+GET `/v1/users/bounding-box`: Récupère tous les bateaux dans une bounding-box
 
 GET `/v1/boats/:id`: Récupère un bateau par ID
 
@@ -109,6 +115,8 @@ DELETE `/v1/boats/:id`: Supprime un bateau
 
 GET `/v1/trips :`Récupère toutes les sorties de pêche
 
+GET `/v1/trips/filters`: Récupère toutes les sorties de pêche filtrées
+
 GET `/v1/trips/:id`: Récupère une sortie par ID
 
 POST `/v1/trips`: Crée une sortie de pêche
@@ -120,6 +128,8 @@ DELETE `/v1/trips/:id`: Supprime une sortie
 ### Réservations (`/v1/reservations`)
 
 GET `/v1/reservations`: Récupère toutes les réservations
+
+GET `/v1/reservations/filters`: Récupère toutes les reservations filtrées
 
 GET `/v1/reservations/:id`: Récupère une réservation par ID
 
@@ -157,5 +167,6 @@ curl -X POST http://localhost:3000/v1/users \
 ```
 
 ## Auteurs
-
-[Lanzafame Hugo](https://github.com/hugolanzafameynov)
+Ait Hamou Mustapha,
+[Lanzafame Hugo](https://github.com/hugolanzafameynov),
+Srifi Pauline

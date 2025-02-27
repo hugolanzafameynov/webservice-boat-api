@@ -1,5 +1,4 @@
 const Boat = require("../models/boat");
-const Equipment = require("../models/equipment");
 const {Op} = require("sequelize");
 
 /**
@@ -95,7 +94,7 @@ const getBoatsWithFilters = async (req, res) => {
         });
 
         if (boats.length === 0) {
-            return res.status(404).json({message: filter + 'No boats found with the specified filters.'});
+            return res.status(404).json({message: 'No boats found with the specified filters.'});
         }
 
         res.status(200).json(boats);
@@ -219,10 +218,12 @@ const updateBoat = async (req, res) => {
 const deleteBoat = async (req, res) => {
     try {
         const boatId = req.params.boatId;
-        const boat = await Boat.destroy({where: {id: boatId}});
+        const deletedCount = await Boat.destroy({
+            where: {id: boatId}
+        });
 
-        if (!boat) {
-            return res.status(404).json({message: 'boat not found'});
+        if (deletedCount === 0) {
+            return res.status(404).json({message: 'Boat not found'});
         }
 
         res.status(204).send();
