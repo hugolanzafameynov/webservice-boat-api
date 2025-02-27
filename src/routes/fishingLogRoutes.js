@@ -4,9 +4,10 @@ const fishingLogController = require('../controllers/fishingLogController');
 const router = express.Router();
 
 router.get('/', fishingLogController.getAllFishingLogs);
-router.get('/:id', fishingLogController.getFishingLogById);
+router.get('/filters', fishingLogController.getFishingLogsWithFilters);
+router.get('/:fishingLogId', fishingLogController.getFishingLogById);
 router.post('/', fishingLogController.createFishingLog);
-router.put('/:id', fishingLogController.updateFishingLog);
-router.delete('/:id', fishingLogController.deleteFishingLog);
+router.put('/:fishingLogId', fishingLogController.updateFishingLog);
+router.delete('/:fishingLogId', fishingLogController.deleteFishingLog);
 
 module.exports = router;

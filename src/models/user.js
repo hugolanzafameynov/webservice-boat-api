@@ -1,7 +1,7 @@
 const {DataTypes} = require('sequelize');
 const sequelize = require('../../config/database');
 
-const user = sequelize.define('User', {
+const User = sequelize.define('User', {
     name: {
         type: DataTypes.STRING,
         allowNull: false
@@ -35,7 +35,7 @@ const user = sequelize.define('User', {
         type: DataTypes.STRING
     },
     spokenLanguages: {
-        type: DataTypes.JSON // Stocke un tableau sous forme JSON
+        type: DataTypes.STRING
     },
     photoUrl: {
         type: DataTypes.STRING
@@ -70,7 +70,7 @@ const user = sequelize.define('User', {
     },
 }, {
     tableName: 'users',
-    timestamps: true, // pour ajouter createdAt et updatedAt
+    timestamps: false, // pour ajouter createdAt et updatedAt
 });
 
-module.exports = user;
+module.exports = User;

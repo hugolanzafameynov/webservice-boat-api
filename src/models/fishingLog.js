@@ -39,7 +39,7 @@ const FishingLog = sequelize.define('FishingLog', {
     },
 }, {
     tableName: 'fishing_logs',
-    timestamps: true, // Ajoute createdAt et updatedAt
+    timestamps: false, // Ajoute createdAt et updatedAt
 });
 
 module.exports = FishingLog;

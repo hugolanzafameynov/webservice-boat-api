@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const {DataTypes} = require('sequelize');
 const sequelize = require('../../config/database');
 
 const Reservation = sequelize.define('Reservation', {
@@ -24,7 +24,7 @@ const Reservation = sequelize.define('Reservation', {
     },
 }, {
     tableName: 'reservations',
-    timestamps: true, // Ajoute createdAt et updatedAt
+    timestamps: false, // Ajoute createdAt et updatedAt
 });
 
 module.exports = Reservation;

@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const {DataTypes} = require('sequelize');
 const sequelize = require('../../config/database');
 
 const FishingTrip = sequelize.define('FishingTrip', {
@@ -18,20 +18,20 @@ const FishingTrip = sequelize.define('FishingTrip', {
         type: DataTypes.ENUM('global', 'per person'),
         allowNull: false,
     },
-    startDate: {
-        type: DataTypes.ARRAY(DataTypes.DATEONLY),
+    startDates: {
+        type: DataTypes.JSON,
         allowNull: false,
     },
-    endDate: {
-        type: DataTypes.ARRAY(DataTypes.DATEONLY),
+    endDates: {
+        type: DataTypes.JSON,
         allowNull: false,
     },
     departureTimes: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
+        type: DataTypes.JSON,
         allowNull: true,
     },
     endTimes: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
+        type: DataTypes.JSON,
         allowNull: true,
     },
     passengers: {
@@ -52,7 +52,7 @@ const FishingTrip = sequelize.define('FishingTrip', {
     },
 }, {
     tableName: 'fishing_trips',
-    timestamps: true, // Ajoute createdAt et updatedAt
+    timestamps: false, // Ajoute createdAt et updatedAt
 });
 
 module.exports = FishingTrip;
