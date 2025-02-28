@@ -135,7 +135,23 @@ GET `/v1/reservations/:id`: Récupère une réservation par ID
 
 POST `/v1/reservations`: Crée une réservation
 
+```json
+{
+    "userId": 1,
+    "tripId": 1,
+    "reservationDate": "2025-03-01",
+    "reservedSeats": 3,
+    "totalPrice": 150.00
+}
+```
+
 PUT `/v1/reservations/:id`: Met à jour une réservation
+
+```json
+{
+  "reservedSeats": 4
+}
+```
 
 DELETE `/v1/reservations/:id`: Supprime une réservation
 
