@@ -1,4 +1,8 @@
 const User = require("../models/user");
+const Boat = require("../models/boat");
+const FishingTrip = require("../models/fishingTrip");
+const Reservation = require("../models/reservation");
+const FishingLog = require("../models/fishingLog");
 const {Op} = require("sequelize");
 
 const getAllUsers = async (req, res) => {
@@ -19,14 +23,11 @@ const getAllUsers = async (req, res) => {
  */
 const getUsersWithFilters = async (req, res) => {
     try {
-        const {
-            title,
-        } = req.query;
-
+        const {name} = req.query;
         let filter = {};
 
         if (name) {
-            filter.title = {[Op.like]: `%${title}%`};
+            filter.name = {[Op.like]: `%${name}%`};
         }
 
         let include = [];
@@ -56,6 +57,32 @@ const getUserById = async (req, res) => {
         }
 
         res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({error: error.message});
+    }
+};
+
+const getUserFullProfileById = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const user = await User.findByPk(userId);
+
+        if (!user) {
+            return res.status(404).json({message: 'User not found'});
+        }
+
+        const boats = await Boat.findAll({where: {userId: userId}});
+        const fishingTrips = await FishingTrip.findAll({where: {userId: userId}});
+        const reservations = await Reservation.findAll({where: {userId: userId}});
+        const fishingLogs = await FishingLog.findAll({where: {userId: userId}});
+
+        res.status(200).json({
+            user,
+            boats,
+            fishingTrips,
+            reservations,
+            fishingLogs
+        });
     } catch (error) {
         res.status(500).json({error: error.message});
     }
@@ -108,6 +135,7 @@ module.exports = {
     getAllUsers,
     getUsersWithFilters,
     getUserById,
+    getUserFullProfileById,
     createUser,
     updateUser,
     deleteUser,

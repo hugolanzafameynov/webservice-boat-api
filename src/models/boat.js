@@ -1,5 +1,6 @@
 const {DataTypes} = require('sequelize');
 const sequelize = require('../../config/database');
+const User = require("./user");
 
 const Boat = sequelize.define('Boat', {
     name: {
@@ -64,6 +65,14 @@ const Boat = sequelize.define('Boat', {
     enginePower: {
         type: DataTypes.INTEGER,
         allowNull: true,
+    },
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: User,
+            key: 'id',
+        },
     },
 }, {
     tableName: 'boats',

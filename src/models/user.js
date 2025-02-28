@@ -42,15 +42,9 @@ const User = sequelize.define('User', {
     },
     boatLicenseNumber: {
         type: DataTypes.STRING,
-        validate: {
-            is: /^[0-9]{8}$/
-        }
     },
     insuranceNumber: {
         type: DataTypes.STRING,
-        validate: {
-            is: /^[a-zA-Z0-9]{12}$/
-        }
     },
     status: {
         type: DataTypes.ENUM('individual', 'professional'),
@@ -67,7 +61,7 @@ const User = sequelize.define('User', {
     },
     registrationNumber: {
         type: DataTypes.STRING
-    },
+    }
 }, {
     tableName: 'users',
     timestamps: false, // pour ajouter createdAt et updatedAt

@@ -143,7 +143,11 @@ DELETE `/v1/reservations/:id`: Supprime une réservation
 
 GET `/v1/fishing-logs`: Récupère tous les carnets de pêche
 
+GET `/v1/reservations/filters`: Récupère tous les carnets de pêche filtrés
+
 GET `/v1/fishing-logs/:id`: Récupère un carnet de pêche par ID
+
+GET `/v1/fishing-logs/:id/user/:userId`: Récupère un carnet de pêche par ID et ID utilisateur
 
 POST `/v1/fishing-logs`: Crée un carnet de pêche
 

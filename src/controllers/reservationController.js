@@ -1,5 +1,7 @@
 const Reservation = require("../models/reservation");
 const {Op} = require("sequelize");
+const User = require("../models/user");
+const FishingTrip = require("../models/fishingTrip");
 
 const getAllReservations = async (req, res) => {
     try {
@@ -29,11 +31,8 @@ const getReservationsWithFilters = async (req, res) => {
             filter.totalPrice = {[Op.eq]: totalPrice};
         }
 
-        let include = [];
-
         const reservations = await Reservation.findAll({
-            where: filter,
-            include: include,
+            where: filter
         });
 
         if (reservations.length === 0) {
@@ -63,6 +62,23 @@ const getReservationById = async (req, res) => {
 
 const createReservation = async (req, res) => {
     try {
+        // check if user exists
+        const {userId} = req.body;
+        const user = await User.findByPk(userId);
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found." });
+        }
+
+        // check if fishing trip exists
+        const {tripId} = req.body;
+        const fishingTrip = await FishingTrip.findByPk(tripId);
+
+        if (!fishingTrip) {
+            return res.status(404).json({ error: "Fishing trip not found." });
+        }
+
+        // create reservation
         const reservation = await Reservation.create(req.body);
         res.status(201).json(reservation);
     } catch (error) {
@@ -72,11 +88,35 @@ const createReservation = async (req, res) => {
 
 const updateReservation = async (req, res) => {
     try {
+        // Check if user exists
+        const {userId} = req.body;
+
+        if (!userId) {
+            const user = await User.findByPk(userId);
+
+            if (!user) {
+                return res.status(404).json({error: "User not found."});
+            }
+        }
+
+        // Check if fishing trip exists
+        const {tripId} = req.body;
+
+        if (tripId) {
+            const fishingTrip = await FishingTrip.findByPk(tripId);
+
+            if (!fishingTrip) {
+                return res.status(404).json({error: "Fishing trip not found."});
+            }
+        }
+
         const reservationId = req.params.reservationId;
+
+        // Mise à jour de la réservation
         const [updated] = await Reservation.update(req.body, {where: {id: reservationId}});
 
         if (!updated) {
-            return res.status(404).json({message: 'reservation not found'});
+            return res.status(404).json({message: 'reservation not found or not modified'});
         }
 
         const updatedReservation = await Reservation.findByPk(reservationId);

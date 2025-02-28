@@ -1,4 +1,5 @@
 const FishingLog = require("../models/fishingLog");
+const User = require("../models/user");
 const {Op} = require("sequelize");
 
 const getAllFishingLogs = async (req, res) => {
@@ -29,11 +30,8 @@ const getFishingLogsWithFilters = async (req, res) => {
             filter.fishName = {[Op.like]: `%${fishName}%`};
         }
 
-        let include = [];
-
         const fishingLogs = await FishingLog.findAll({
             where: filter,
-            include: include,
         });
 
         if (fishingLogs.length === 0) {
@@ -61,8 +59,44 @@ const getFishingLogById = async (req, res) => {
     }
 };
 
+const getFishingLogByIdAndUserId = async (req, res) => {
+    try {
+        // Check if user exists
+        const {userId} = req.body;
+        const user = await User.findByPk(userId);
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found." });
+        }
+
+        // Get fishingLog
+        const {fishingLogId} = req.params;
+        const fishingLog = await FishingLog.findOne({
+            where: {id: fishingLogId, userId: userId}
+        });
+
+        if (!fishingLog) {
+            return res.status(404).json({message: 'FishingLog not found'});
+        }
+
+        res.status(200).json(fishingLog);
+    } catch (error) {
+        res.status(500).json({error: error.message});
+    }
+};
+
+
 const createFishingLog = async (req, res) => {
     try {
+        // Check if user exists
+        const {userId} = req.body;
+        const user = await User.findByPk(userId);
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found." });
+        }
+
+        // Create new fishingLog
         const fishingLog = await FishingLog.create(req.body);
         res.status(201).json(fishingLog);
     } catch (error) {
@@ -72,11 +106,22 @@ const createFishingLog = async (req, res) => {
 
 const updateFishingLog = async (req, res) => {
     try {
+        // check if user exists
+        const {userId} = req.body;
+
+        if (userId) {
+            const user = await User.findByPk(userId);
+
+            if (!user) {
+                return res.status(404).json({error: "User not found."});
+            }
+        }
+
         const fishingLogId = req.params.fishingLogId;
         const [updated] = await FishingLog.update(req.body, {where: {id: fishingLogId}});
 
         if (!updated) {
-            return res.status(404).json({message: 'FishingLog not found'});
+            return res.status(404).json({message: 'FishingLog not found or not modified'});
         }
 
         const updatedFishingLog = await FishingLog.findByPk(fishingLogId);
@@ -107,6 +152,7 @@ module.exports = {
     getAllFishingLogs,
     getFishingLogsWithFilters,
     getFishingLogById,
+    getFishingLogByIdAndUserId,
     createFishingLog,
     updateFishingLog,
     deleteFishingLog,
