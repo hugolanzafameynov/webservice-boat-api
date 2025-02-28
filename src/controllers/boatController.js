@@ -246,7 +246,9 @@ const createBoat = async (req, res) => {
                     equipmentId: equipmentId
                 }));
 
-                await BoatEquipment.bulkCreate(boatEquipmentEntries);
+                for (const boatEquipmentEntry of boatEquipmentEntries) {
+                    await BoatEquipment.create(boatEquipmentEntry);
+                }
             }
         }
 
@@ -309,8 +311,6 @@ const updateBoat = async (req, res) => {
             return res.status(404).json({message: 'boat not found or not modified'});
         }
 
-        const boat = await Boat.findByPk(boatId);
-
         // Add equipments to the boat
         if (equipmentIds && Array.isArray(equipmentIds)) {
             await BoatEquipment.destroy({where: {boatId: boatId}});
@@ -321,7 +321,9 @@ const updateBoat = async (req, res) => {
                     equipmentId: equipmentId
                 }));
 
-                await BoatEquipment.bulkCreate(boatEquipmentEntries);
+                for (const boatEquipmentEntry of boatEquipmentEntries) {
+                    await BoatEquipment.create(boatEquipmentEntry);
+                }
             }
         }
 
