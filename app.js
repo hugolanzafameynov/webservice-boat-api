@@ -3,7 +3,6 @@ const sequelize = require('./config/database');
 
 const app = express();
 
-
 // Database initialization
 const User = require("./src/models/user");
 const Boat = require("./src/models/boat");
@@ -17,6 +16,20 @@ User.hasMany(Boat, {foreignKey: 'userId', onDelete: 'CASCADE'});
 User.hasMany(FishingTrip, {foreignKey: 'userId', onDelete: 'CASCADE'});
 User.hasMany(FishingLog, {foreignKey: 'userId', onDelete: 'CASCADE'});
 User.hasMany(Reservation, {foreignKey: 'userId', onDelete: 'CASCADE'});
+
+Equipment.belongsToMany(Boat, {
+    through: 'boat_equipments',
+    foreignKey: 'equipmentId',
+    otherKey: 'boatId',
+    timestamps: false,
+});
+
+Boat.belongsToMany(Equipment, {
+    through: 'boat_equipments',
+    foreignKey: 'boatId',
+    otherKey: 'equipmentId',
+    timestamps: false,
+});
 
 sequelize.sync({alter: true})
     .then(() => {

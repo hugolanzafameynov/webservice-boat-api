@@ -1,6 +1,8 @@
 const Boat = require("../models/boat");
 const User = require("../models/user");
 const {Op} = require("sequelize");
+const Equipment = require("../models/equipment");
+const BoatEquipment = require("../models/boatEquipment");
 
 /**
  * Get all boats
@@ -11,7 +13,14 @@ const {Op} = require("sequelize");
  */
 const getAllBoats = async (req, res) => {
     try {
-        const boats = await Boat.findAll();
+        const boats = await Boat.findAll({
+            include: {
+                model: Equipment,
+                through: {
+                    attributes: []
+                }
+            }
+        });
         res.status(200).json(boats);
     } catch (error) {
         res.status(500).json({error: error.message});
@@ -89,6 +98,12 @@ const getBoatsWithFilters = async (req, res) => {
 
         const boats = await Boat.findAll({
             where: filter,
+            include: {
+                model: Equipment,
+                through: {
+                    attributes: []
+                }
+            }
         });
 
         if (boats.length === 0) {
@@ -132,6 +147,12 @@ const getBoatsByBoundingBox = async (req, res) => {
                 longitude: {
                     [Op.between]: [minLon, maxLon],
                 }
+            },
+            include: {
+                model: Equipment,
+                through: {
+                    attributes: []
+                }
             }
         });
 
@@ -156,7 +177,14 @@ const getBoatsByBoundingBox = async (req, res) => {
 const getBoatById = async (req, res) => {
     try {
         const boatId = req.params.boatId;
-        const boat = await Boat.findByPk(boatId);
+        const boat = await Boat.findByPk(boatId, {
+            include: {
+                model: Equipment,
+                through: {
+                    attributes: []
+                }
+            }
+        });
 
         if (!boat) {
             return res.status(404).json({message: 'boat not found'});
@@ -190,9 +218,48 @@ const createBoat = async (req, res) => {
             return res.status(403).json({error: "You must have a boat license to create a boat."});
         }
 
+        // Check if equipments exist
+        const {equipmentIds} = req.body;
+
+        if (equipmentIds && Array.isArray(equipmentIds)) {
+            const existingEquipments = await Equipment.findAll({
+                where: {id: equipmentIds},
+                attributes: ['id']
+            });
+
+            const existingEquipmentIds = existingEquipments.map(eq => eq.id);
+            const invalidEquipmentIds = equipmentIds.filter(id => !existingEquipmentIds.includes(id));
+
+            if (invalidEquipmentIds.length > 0) {
+                return res.status(400).json({error: `Invalid equipment IDs: ${invalidEquipmentIds.join(', ')}`});
+            }
+        }
+
         // Create new boat
         const boat = await Boat.create(req.body);
-        res.status(201).json(boat);
+
+        // Add equipments to the boat
+        if (equipmentIds && Array.isArray(equipmentIds)) {
+            if (equipmentIds && Array.isArray(equipmentIds)) {
+                const boatEquipmentEntries = equipmentIds.map(equipmentId => ({
+                    boatId: boat.id,
+                    equipmentId: equipmentId
+                }));
+
+                await BoatEquipment.bulkCreate(boatEquipmentEntries);
+            }
+        }
+
+        const boatWithEquipments = await Boat.findByPk(boat.id, {
+            include: {
+                model: Equipment,
+                through: {
+                    attributes: []
+                }
+            }
+        });
+
+        res.status(201).json(boatWithEquipments);
     } catch (error) {
         res.status(400).json({error: error.message});
     }
@@ -218,16 +285,55 @@ const updateBoat = async (req, res) => {
             }
         }
 
+        // Check if equipments exist
+        const {equipmentIds} = req.body;
+
+        if (equipmentIds && Array.isArray(equipmentIds)) {
+            const existingEquipments = await Equipment.findAll({
+                where: {id: equipmentIds},
+                attributes: ['id']
+            });
+
+            const existingEquipmentIds = existingEquipments.map(eq => eq.id);
+            const invalidEquipmentIds = equipmentIds.filter(id => !existingEquipmentIds.includes(id));
+
+            if (invalidEquipmentIds.length > 0) {
+                return res.status(400).json({error: `Invalid equipment IDs: ${invalidEquipmentIds.join(', ')}`});
+            }
+        }
+
         const boatId = req.params.boatId;
         const [updated] = await Boat.update(req.body, {where: {id: boatId}});
 
-        if (!updated) {
+        if (!equipmentIds && !updated) {
             return res.status(404).json({message: 'boat not found or not modified'});
         }
 
-        // Return the updated boat
         const boat = await Boat.findByPk(boatId);
-        res.status(200).json(boat);
+
+        // Add equipments to the boat
+        if (equipmentIds && Array.isArray(equipmentIds)) {
+            await BoatEquipment.destroy({where: {boatId: boatId}});
+
+            if (equipmentIds && Array.isArray(equipmentIds)) {
+                const boatEquipmentEntries = equipmentIds.map(equipmentId => ({
+                    boatId: boatId,
+                    equipmentId: equipmentId
+                }));
+
+                await BoatEquipment.bulkCreate(boatEquipmentEntries);
+            }
+        }
+
+        const updatedBoatWithEquipments = await Boat.findByPk(boatId, {
+            include: {
+                model: Equipment,
+                through: {
+                    attributes: []
+                }
+            }
+        });
+        res.status(200).json(updatedBoatWithEquipments);
     } catch (error) {
         res.status(400).json({error: error.message});
     }
@@ -250,6 +356,9 @@ const deleteBoat = async (req, res) => {
         if (deletedCount === 0) {
             return res.status(404).json({message: 'Boat not found'});
         }
+
+        // Delete boat equipments
+        await BoatEquipment.destroy({where: {boatId: boatId}});
 
         res.status(204).send();
     } catch (error) {

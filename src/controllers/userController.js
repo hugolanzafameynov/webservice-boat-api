@@ -3,6 +3,7 @@ const Boat = require("../models/boat");
 const FishingTrip = require("../models/fishingTrip");
 const Reservation = require("../models/reservation");
 const FishingLog = require("../models/fishingLog");
+const Equipment = require("../models/equipment");
 const {Op} = require("sequelize");
 
 const getAllUsers = async (req, res) => {
@@ -71,7 +72,16 @@ const getUserFullProfileById = async (req, res) => {
             return res.status(404).json({message: 'User not found'});
         }
 
-        const boats = await Boat.findAll({where: {userId: userId}});
+        // Get boats, fishing trips, reservations and fishing logs
+        const boats = await Boat.findAll({
+            where: {userId: userId},
+            include: {
+                model: Equipment,
+                through: {
+                    attributes: []
+                }
+            }
+        });
         const fishingTrips = await FishingTrip.findAll({where: {userId: userId}});
         const reservations = await Reservation.findAll({where: {userId: userId}});
         const fishingLogs = await FishingLog.findAll({where: {userId: userId}});
