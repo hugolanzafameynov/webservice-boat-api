@@ -3,7 +3,22 @@ const sequelize = require('./config/database');
 
 const app = express();
 
-sequelize.sync({ alter: true })
+
+// Database initialization
+const User = require("./src/models/user");
+const Boat = require("./src/models/boat");
+const FishingLog = require("./src/models/fishingLog");
+const Reservation = require("./src/models/reservation");
+const FishingTrip = require("./src/models/fishingTrip");
+const Equipment = require("./src/models/equipment");
+const BoatEquipment = require("./src/models/boatEquipment");
+
+User.hasMany(Boat, {foreignKey: 'userId', onDelete: 'CASCADE'});
+User.hasMany(FishingTrip, {foreignKey: 'userId', onDelete: 'CASCADE'});
+User.hasMany(FishingLog, {foreignKey: 'userId', onDelete: 'CASCADE'});
+User.hasMany(Reservation, {foreignKey: 'userId', onDelete: 'CASCADE'});
+
+sequelize.sync({alter: true})
     .then(() => {
         console.log('Tables synchronisées');
     })
@@ -11,22 +26,12 @@ sequelize.sync({ alter: true })
         console.log('Erreur de synchronisation', err);
     });
 
+// Routes initialization
 const userRoutes = require('./src/routes/userRoutes');
 const boatRoutes = require('./src/routes/boatRoutes');
 const fishingLogRoutes = require('./src/routes/fishingLogRoutes');
 const reservationRoutes = require('./src/routes/reservationRoutes');
 const fishingTripRoutes = require('./src/routes/fishingTripRoutes');
-
-// const Boat = require("./src/models/boat");
-// const Equipment = require("./src/models/equipment");
-//
-// Equipment.belongsToMany(Boat, {
-//     through: 'BoatEquipments'
-// });
-//
-// Boat.belongsToMany(Equipment, {
-//     through: 'BoatEquipments'
-// });
 
 // Middleware
 app.use(express.json());

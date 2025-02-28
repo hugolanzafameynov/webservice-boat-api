@@ -1,5 +1,7 @@
 const {DataTypes} = require('sequelize');
 const sequelize = require('../../config/database');
+const User = require('./user');
+const Boat = require('./boat');
 
 const FishingTrip = sequelize.define('FishingTrip', {
     title: {
@@ -42,13 +44,21 @@ const FishingTrip = sequelize.define('FishingTrip', {
         type: DataTypes.FLOAT,
         allowNull: false,
     },
-    userId: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     boatId: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+            model: Boat,
+            key: 'id',
+        },
+    },
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: User,
+            key: 'id',
+        },
     },
 }, {
     tableName: 'fishing_trips',

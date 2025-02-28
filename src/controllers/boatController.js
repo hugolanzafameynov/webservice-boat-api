@@ -87,11 +87,8 @@ const getBoatsWithFilters = async (req, res) => {
             filter.enginePower = {[Op.gte]: enginePower};
         }
 
-        let include = [];
-
         const boats = await Boat.findAll({
             where: filter,
-            include: include,
         });
 
         if (boats.length === 0) {
@@ -180,6 +177,7 @@ const getBoatById = async (req, res) => {
  */
 const createBoat = async (req, res) => {
     try {
+        // Check if user exists
         const {userId} = req.body;
         const user = await User.findByPk(userId);
 
@@ -187,10 +185,12 @@ const createBoat = async (req, res) => {
             return res.status(404).json({error: "User not found."});
         }
 
+        // Check if user has a boat license
         if (!user.boatLicenseNumber) {
             return res.status(403).json({error: "You must have a boat license to create a boat."});
         }
 
+        // Create new boat
         const boat = await Boat.create(req.body);
         res.status(201).json(boat);
     } catch (error) {
@@ -207,13 +207,26 @@ const createBoat = async (req, res) => {
  */
 const updateBoat = async (req, res) => {
     try {
-        const boatId = req.params.boatId;
-        const boat = await Boat.update(req.body, {where: {id: boatId}});
+        // check if user exists
+        const {userId} = req.body;
 
-        if (!boat) {
-            return res.status(404).json({message: 'boat not found'});
+        if (userId) {
+            const user = await User.findByPk(userId);
+
+            if (!user) {
+                return res.status(404).json({error: "User not found."});
+            }
         }
 
+        const boatId = req.params.boatId;
+        const [updated] = await Boat.update(req.body, {where: {id: boatId}});
+
+        if (!updated) {
+            return res.status(404).json({message: 'boat not found or not modified'});
+        }
+
+        // Return the updated boat
+        const boat = await Boat.findByPk(boatId);
         res.status(200).json(boat);
     } catch (error) {
         res.status(400).json({error: error.message});

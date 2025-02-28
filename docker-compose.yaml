@@ -2,7 +2,7 @@ services:
   ws.mysql:
     build:
       context: ws.mysql/
-      dockerfile: Dockerfile
+      dockerfile: dockerFile
     container_name: ws.mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
@@ -26,7 +26,7 @@ services:
   ws.dbviewer:
     build:
       context: ws.dbviewer/
-      dockerfile: Dockerfile
+      dockerfile: dockerFile
     container_name: ws.dbviewer
     restart: unless-stopped
     depends_on:

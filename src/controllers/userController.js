@@ -23,14 +23,11 @@ const getAllUsers = async (req, res) => {
  */
 const getUsersWithFilters = async (req, res) => {
     try {
-        const {
-            title,
-        } = req.query;
-
+        const {name} = req.query;
         let filter = {};
 
         if (name) {
-            filter.title = {[Op.like]: `%${title}%`};
+            filter.name = {[Op.like]: `%${name}%`};
         }
 
         let include = [];
@@ -71,13 +68,13 @@ const getUserFullProfileById = async (req, res) => {
         const user = await User.findByPk(userId);
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({message: 'User not found'});
         }
 
-        const boats = await Boat.findAll({ where: { id: user.boatIds } });
-        const fishingTrips = await FishingTrip.findAll({ where: { id: user.fishingTripIds } });
-        const reservations = await Reservation.findAll({ where: { id: user.reservationIds } });
-        const fishingLogs = await FishingLog.findAll({ where: { id: user.fishingLogIds } });
+        const boats = await Boat.findAll({where: {userId: userId}});
+        const fishingTrips = await FishingTrip.findAll({where: {userId: userId}});
+        const reservations = await Reservation.findAll({where: {userId: userId}});
+        const fishingLogs = await FishingLog.findAll({where: {userId: userId}});
 
         res.status(200).json({
             user,

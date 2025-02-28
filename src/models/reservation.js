@@ -1,11 +1,9 @@
 const {DataTypes} = require('sequelize');
 const sequelize = require('../../config/database');
+const User = require('./user');
+const FishingTrip = require("./fishingTrip");
 
 const Reservation = sequelize.define('Reservation', {
-    tripId: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     reservationDate: {
         type: DataTypes.DATEONLY,
         allowNull: false,
@@ -18,9 +16,21 @@ const Reservation = sequelize.define('Reservation', {
         type: DataTypes.FLOAT,
         allowNull: false,
     },
-    userId: {
-        type: DataTypes.STRING,
+    tripId: {
+        type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+            model: FishingTrip,
+            key: 'id',
+        },
+    },
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: User,
+            key: 'id',
+        },
     },
 }, {
     tableName: 'reservations',

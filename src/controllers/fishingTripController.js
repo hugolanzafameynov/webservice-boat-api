@@ -30,11 +30,8 @@ const getFishingTripsWithFilters = async (req, res) => {
             filter.title = {[Op.like]: `%${title}%`};
         }
 
-        let include = [];
-
         const fishingTrips = await FishingTrip.findAll({
             where: filter,
-            include: include,
         });
 
         if (fishingTrips.length === 0) {
@@ -64,19 +61,30 @@ const getFishingTripById = async (req, res) => {
 
 const createFishingTrip = async (req, res) => {
     try {
-        const {userId, boatId} = req.body;
+        // check if user exists
+        const {userId} = req.body;
         const user = await User.findByPk(userId);
 
         if (!user) {
-            return res.status(404).json({ error: "User not found." });
+            return res.status(404).json({error: "User not found."});
         }
 
-        const userHasBoat = user.boatIds.includes(boatId);
+        // check if boat exists
+        const {boatId} = req.body;
+        const boat = await User.findByPk(boatId);
+
+        if (!boat) {
+            return res.status(404).json({error: "Boat not found."});
+        }
+
+        // check if user has the boat
+        const userHasBoat = boat.userId === userId;
 
         if (!userHasBoat) {
             return res.status(403).json({error: "You must own this boat to create this fishing trip."});
         }
 
+        // create fishing trip
         const fishingTrip = await FishingTrip.create(req.body);
         res.status(201).json(fishingTrip);
     } catch (error) {
@@ -86,11 +94,33 @@ const createFishingTrip = async (req, res) => {
 
 const updateFishingTrip = async (req, res) => {
     try {
+        // check if user exists
+        const {userId} = req.body;
+
+        if (userId) {
+            const user = await User.findByPk(userId);
+
+            if (!user) {
+                return res.status(404).json({error: "User not found."});
+            }
+        }
+
+        // check if boat exists
+        const {boatId} = req.body;
+
+        if (boatId) {
+            const boat = await User.findByPk(boatId);
+
+            if (!boat) {
+                return res.status(404).json({error: "Boat not found."});
+            }
+        }
+
         const fishingTripId = req.params.fishingTripId;
         const [updated] = await FishingTrip.update(req.body, {where: {id: fishingTripId}});
 
         if (!updated) {
-            return res.status(404).json({message: 'Fishing trip not found'});
+            return res.status(404).json({message: 'Fishing trip not found or not modified'});
         }
 
         const updatedFishingTrip = await FishingTrip.findByPk(fishingTripId);
