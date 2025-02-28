@@ -1,5 +1,6 @@
 const FishingTrip = require("../models/fishingTrip");
 const User = require("../models/user");
+const Boat = require("../models/boat");
 const {Op} = require("sequelize");
 
 const getAllFishingTrips = async (req, res) => {
@@ -69,19 +70,19 @@ const createFishingTrip = async (req, res) => {
             return res.status(404).json({error: "User not found."});
         }
 
+        // check if the user owns at least one boat
+        const boats = await Boat.findAll({ where: { userId } });
+
+        if (boats.length === 0) {
+            return res.status(403).json({ error: "You must own at least one boat to create this fishing trip." });
+        }
+
         // check if boat exists
         const {boatId} = req.body;
-        const boat = await User.findByPk(boatId);
+        const boat = await Boat.findByPk(boatId);
 
         if (!boat) {
             return res.status(404).json({error: "Boat not found."});
-        }
-
-        // check if user has the boat
-        const userHasBoat = boat.userId === userId;
-
-        if (!userHasBoat) {
-            return res.status(403).json({error: "You must own this boat to create this fishing trip."});
         }
 
         // create fishing trip
